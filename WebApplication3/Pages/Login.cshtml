@@ -1,0 +1,74 @@
+﻿@page
+@model WebApplication3.Pages.LoginModel
+@{
+}
+@using AspNetCore.ReCaptcha
+@Html.ReCaptcha()
+
+
+<div class="container mt-5">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-sm-12 col-md-12 col-lg-4">
+            <h1 class="mb-3">Login </h1>
+            <form method="post" id="registrationForm">
+
+                @Html.AntiForgeryToken()
+
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <div class="mb-3">
+                    <label class="form-label" asp-for="LModel.Email">Email Address</label>
+                    <input type="text" asp-for="LModel.Email" class="form-control" />
+                    <span asp-validation-for="LModel.Email" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" asp-for="LModel.Password">Password</label>
+                    <input type="password" asp-for="LModel.Password" class="form-control" />
+                    <span asp-validation-for="LModel.Password" class="text-danger"></span>
+                </div>
+
+                <div class="mb-3 form-check">
+                    <input type="checkbox" asp-for="LModel.RememberMe" class="form-check-input" />
+                    <label class="form-check-label" asp-for="LModel.RememberMe">Remember Me?</label>
+                </div>
+
+                <div class="mb-3">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#registrationForm').validate({
+                rules: {
+                    'LModel.Email': {
+                        required: true
+                    },
+                    'LModel.Password': {
+                        required: true
+                    },
+                },
+                messages: {
+                    'LModel.Email': {
+                        required: 'Please enter Email.'
+                    },
+                    'LModel.Password': {
+                        required: 'Please enter Password.'
+                    },
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('text-danger');
+                    error.insertAfter(element);
+                },
+                submitHandler: function (form) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,106 @@
+﻿@page
+@using Microsoft.AspNetCore.Identity
+@using WebApplication3.Model;
+@model IndexModel
+@inject SignInManager<UserProfile> signInManager
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+<div class="container mt-5">
+    <h1>User Profile</h1>
+
+    <dl class="row">
+        <dt class="col-sm-3">First Name:</dt>
+        <dd class="col-sm-9">@Model.FirstName</dd>
+
+        <dt class="col-sm-3">Last Name:</dt>
+        <dd class="col-sm-9">@Model.LastName</dd>
+
+        <dt class="col-sm-3">Gender:</dt>
+        <dd class="col-sm-9">@Model.Gender</dd>
+
+        <dt class="col-sm-3">NRIC:</dt>
+        <dd class="col-sm-9">@Model.DecryptedNRIC</dd>
+
+        <dt class="col-sm-3">Date of Birth:</dt>
+        <dd class="col-sm-9">@Model.DateOfBirth.ToShortDateString()</dd>
+
+        <dt class="col-sm-3">Email:</dt>
+        <dd class="col-sm-9">@Model.Email</dd>
+
+        <dt class="col-sm-3">Password hash:</dt>
+        <dd class="col-sm-9">@Model.password</dd>
+
+        <dt class="col-sm-3">Who Am I:</dt>
+        <dd class="col-sm-9">@Model.WhoAmI</dd>
+
+
+
+        <form method="post" enctype="multipart/form-data">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="IModel.Password">Password</label>
+                <input type="password" asp-for="IModel.Password" class="form-control" />
+                <span asp-validation-for="IModel.Password" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="IModel.ConfirmPassword">Confirm Password</label>
+                <input type="password" asp-for="IModel.ConfirmPassword" class="form-control" />
+                <span asp-validation-for="IModel.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary">Register</button>
+            </div>
+        </form>
+    </dl>
+</div>
+
+
+@section Scripts {
+    <script>
+
+        $(document).ready(function () {
+            $.validator.addMethod('hasLowerCase', function (value, element) {
+                return /[a-z]/.test(value);
+            }, 'Password must contain at least 1 lowercase letter.');
+
+            $.validator.addMethod('hasUpperCase', function (value, element) {
+                return /[A-Z]/.test(value);
+            }, 'Password must contain at least 1 uppercase letter.');
+
+            $.validator.addMethod('hasNumber', function (value, element) {
+                return /\d/.test(value);
+            }, 'Password must contain at least 1 number.');
+
+            $.validator.addMethod('hasSpecialCharacter', function (value, element) {
+                return /[!@@#$%^&*()_+{}\[\]:;<>,.?~\\/-]/.test(value);
+            }, 'Password must contain at least 1 special character.');
+
+           
+
+            $('#registrationForm').validate({
+               
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('text-danger');
+                    error.insertAfter(element);
+                },
+                submitHandler: function (form) {
+                    form.submit();
+                }
+            });
+        });
+    </script>
+}

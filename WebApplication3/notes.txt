@@ -1,0 +1,211 @@
+﻿sossososososo....
+uhh
+
+ok so I'm still very confused but I have a little more understanding now abt what the heck I'm doing.
+Basically what I just did was to create a class for userInfo called UserProfile that is not already within IdentityUser.
+
+In case u forget later on, basically, IdentityUser is a built in class in Microsoft.AspNetCore.Identity.
+I don't want to touch it directly or else it might screw up with smt esp while I follow the practicals,
+so I just made another model for stuff that aren't impt for user management and security.
+
+
+Words cannot express the frustration I just experienced.
+
+so we've finished:
+	database stuff
+	registration and login (actly haven't tested login but I pray to God it works)
+	^I just testeed it and it didn't 
+	logout works though so that's nice
+
+Yeah that's kinda it, but with that, the foundation is set and all the 
+other fancy features can b put so I'm not that pessimistic honestly.
+
+29/1/2024
+validation is mostly done yay
+
+I;m a bit confused about some of the requirements. Shld b fine though. 
+The class tmr is 2 hours long so there's plent of time to tweak stuff.
+
+stuff i don't understand:
+	Why is NRIC specifically mentioned to b encrypted if after that, 
+	the requirements say that all user data must b encrypted. Is it encrypted twice??
+
+	What actions exaclty r we suppoed to log? everything?
+
+
+okayyyy let's take a break and review what we still need to do:
+  encryption of NRIC
+  make sure password is stored properly as a hash and not plaintext
+  display user info at the homepage.
+  recaptcha
+  github testing thingy
+  also hv to add all the xss and csrf preventions tuff to login. Currently its only in register
+  and also figure out what to log
+  and test everything in general
+
+
+
+
+checklist:
+//	* => done and tested
+//	- => done but not tested
+
+Registration process
+• Successfully saving member info into Database*
+• Check for duplicate email and rectify issue.*
+
+Set Strong password
+• Perform password complexity checks. (Min 12 chars,*
+Use combination of lower-case, upper-case, Numbers*
+and special characters)*
+• Offer feedback to user on STRONG password.*
+• Implement both Client-based and Server-based checks.- (tested for frontend, but backend not tested)
+
+Securing user data and passwords
+• Implement Password Protection
+• Encryption of customer data (encrypt data in database)
+• Decryption of customer data (display in homepage)
+
+Session Management
+• Create a Secured Session upon successful login.*
+• Perform Session timeout-
+• Route to homepage/login page after session timeout.-
+• Detect multiple logins from different devices (different browser tabs)-
+
+Credential Verification
+• Able to login to system after registration.*
+• Rate Limiting (E.g Account lockout after 3 login failures)-
+• Perform proper and safe logout (Clear session and redirect to login page)*
+• Perform audit log (save user activities in Database)-
+• Redirect to homepage after successful credential verification. *
+Home page displays the user info including encrypted data. (homepage currently doesn't have anything)
+
+Implement Google reCaptcha v3 service (I'll do this last cuz it's not that hard and if i implement it now, 
+it'll b annoying to hv to do captcha everytime i test something)
+
+Input Validation checks
+• Prevent Injection (e.g SQLi), CSRF and XSS attack.-
+• Perform proper input sanitation, validation and-
+verification. (e.g email, HP, date etc)
+• Client and server input validation-
+• Display error or warning message on improper input requirements.-
+• Perform proper encoding before saving into database.-
+
+Customed Error Message
+• Graceful error handling on all pages (including-
+404, 403 and any other possible error pages etc)
+• Display proper customed error pages.-
+
+Testing
+• Use external tools to perform software testing:
+- Github (check week 14 eLab)
+• Implement the recommendation to clear the
+security vulnerability for your source code.
+• Demo and show it to your tutor in your Github account.
+
+Account policies and recovery
+• Automatic account recovery after x mins of lockout.
+• Avoid password reuse (max 2 password history)
+• Change password
+• Reset Password (using Email link / SMS)
+• Minimum and Maximum password age (cannot change password within x mins 
+from the last change of password and must change password after x mins)
+
+Authentication/Authorization 2FA
+
+
+
+
+
+HIHIHIHIHIIIIIIIIIIIIIIII heheheheheheheheh
+so i do the captcha yes mmmm it work so gud yesyes.
+now we do the uhhhhhhhh the the ok so got um 2fa yes and then all the advanced features and the testing yes mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm
+
+here is green friend's advice for the advanced features stuff:
+
+To implement the specified account policies and recovery features in ASP.NET Core Identity, you can make use of various configuration options provided by the IdentityOptions. Additionally, you might need to use services like IUserClaimsPrincipalFactory<TUser> and IUserConfirmation<TUser> to customize certain aspects.
+
+Here's an example of how you might implement the specified features:
+
+Automatic account recovery after x minutes of lockout:
+
+In your ConfigureServices method, configure the lockout settings:
+
+csharp
+Copy code
+services.Configure<IdentityOptions>(options =>
+{
+    // ... other options ...
+
+    // Account lockout settings
+    options.Lockout.AllowedForNewUsers = true;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15); // Lockout duration after the specified number of failed access attempts
+    options.Lockout.MaxFailedAccessAttempts = 3; // Number of failed access attempts before an account is locked
+});
+This example sets the lockout duration to 15 minutes.
+
+Avoid password reuse (max 2 password history):
+
+Use the PasswordValidator to configure password policies:
+
+csharp
+Copy code
+services.Configure<IdentityOptions>(options =>
+{
+    // ... other options ...
+
+    options.Password.RequiredUniqueChars = 3; // Minimum number of unique characters
+    options.Password.RequiredLength = 8; // Minimum password length
+    options.Password.RequiredDigit = true; // Require a digit
+    options.Password.RequiredLowercase = true; // Require a lowercase letter
+    options.Password.RequiredUppercase = true; // Require an uppercase letter
+
+    // Password history settings
+    options.Password.HistorySize = 2; // Maximum number of previous passwords to store
+});
+Change password:
+
+Implement a change password feature in your application using the ChangePasswordAsync method provided by UserManager.
+
+Reset Password (using Email link / SMS):
+
+Use the ForgotPasswordAsync and ResetPasswordAsync methods provided by UserManager. You may need to customize the email sending logic based on your requirements.
+
+Minimum and Maximum password age:
+
+Set the minimum and maximum password age in the IdentityOptions:
+
+csharp
+Copy code
+services.Configure<IdentityOptions>(options =>
+{
+    // ... other options ...
+
+    // Minimum and Maximum password age settings
+    options.Password.RequiredChangePassword = true; // Users must change their password
+    options.Password.ChangePasswordOptions = new PasswordChangeOptions
+    {
+        ChangePasswordInDays = 30, // Users must change their password after 30 days
+        ChangePasswordFromLastChange = 5, // Users cannot change their password within 5 days from the last change
+    };
+});
+Adjust the values according to your policy.
+
+Remember to incorporate these configurations within the ConfigureServices method in your Startup.cs file.
+
+Please note that some of these features might require additional implementation and customization based on your application's specific requirements.
+
+
+
+
+
+
+Automatic account recovery after x mins of
+lockout.
+• Avoid password reuse (max 2 password history)
+• Change password
+• Reset Password (using Email link / SMS)
+• Minimum and Maximum password age (cannot
+change password within x mins from the last
+change of password and must change password
+after x mins)
